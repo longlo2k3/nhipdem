@@ -8,6 +8,7 @@
 - Dự án EAS đã liên kết: [@longvy/nhip-tap](https://expo.dev/accounts/longvy/projects/nhip-tap), ID `8e188183-3845-454e-98ca-f992654745b9`.
 - Expo CLI đã đăng nhập tài khoản `longvy`; Expo MCP đã xác thực OAuth thành công. Chưa tạo hoặc tải lên bản cài iOS.
 - Người dùng có tài khoản Expo và chưa có Apple Developer.
+- Kho nguồn: [longlo2k3/nhipdem](https://github.com/longlo2k3/nhipdem); `mobile/` là submodule trỏ đến [longlo2k3/mobile](https://github.com/longlo2k3/mobile).
 
 ## Thử ngay trên iPhone bằng Expo Go
 
@@ -54,7 +55,7 @@ Khả năng điều khiển iOS Simulator tại máy không dùng được trên
 
 Windows dùng được EAS cloud build; máy chủ macOS của EAS thực hiện bước biên dịch và ký iOS.
 Để cài bản riêng lên iPhone qua EAS hoặc dùng TestFlight, cần Apple Developer đang hoạt động và quyền ký ứng dụng.
-Hiện chưa có Apple Developer nên dừng ở Expo Go; không tự mua gói hoặc gửi build tính phí.
+Hiện chưa có Apple Developer nên EAS chưa tạo được bản cài cho iPhone thật; có thể dùng Expo Go hoặc quy trình IPA chưa ký bên dưới. Không tự mua gói hoặc gửi build tính phí.
 
 Sau khi có tài khoản và chọn đúng dự án:
 
@@ -83,12 +84,33 @@ npx eas-cli@latest submit --platform ios --latest
 
 Build production chưa có nghĩa app đã hiện trên TestFlight. Cần submit và chờ Apple xử lý, hoàn tất yêu cầu tuân thủ và cấu hình người thử.
 
+## Tạo IPA chưa ký trên GitHub Actions
+
+Workflow `.github/workflows/ios-unsigned.yml` chạy thủ công trên máy macOS tiêu chuẩn
+của GitHub. Không cần Apple ID, chứng chỉ ký, token Expo hoặc gói EAS trả phí.
+
+1. Mở [Build iPhone IPA (unsigned)](https://github.com/longlo2k3/nhipdem/actions/workflows/ios-unsigned.yml).
+2. Chọn **Run workflow**, nhánh `main`, rồi **Run workflow**.
+3. Chờ tác vụ thành công. Trong mục **Artifacts**, tải **NhipTap-unsigned-ipa**.
+4. Giải nén ZIP tải về để lấy **NhipTap-unsigned.ipa** và tệp kiểm tra SHA-256.
+5. Dùng **AltStore Classic / AltServer** trên Windows để ký và cài IPA bằng Apple ID miễn phí.
+
+Đây là bản Release cho iPhone thật, có JavaScript đóng gói sẵn để chạy khi máy tính
+tắt. IPA chưa ký không cài trực tiếp bằng Safari và không dùng cho TestFlight.
+Apple ID miễn phí cần gia hạn chữ ký mỗi 7 ngày; kiểm tra khả năng cài và các quyền
+native trên iPhone trước khi coi là hoàn tất. Xuất sao lưu trước khi chuyển từ Expo Go.
+
+Workflow chỉ tải artifact khi có app arm64 cho iPhoneOS, JavaScript bundle không
+rỗng và IPA hợp lệ. Log Xcode được lưu riêng để chẩn đoán nếu biên dịch thất bại.
+Build lấy đúng commit của submodule `mobile` đang được kho gốc ghi nhận. Khi đổi mã
+app, cần đẩy commit lên kho `mobile` và cập nhật gitlink trong kho gốc trước khi build.
+
 ## Chạy build qua MCP
 
 - `build_list`, `build_info`, `build_logs`: xem build và chẩn đoán lỗi.
 - `build_run`: gọi profile trong `eas.json`. Theo tài liệu hiện hành, dự án EAS phải liên kết GitHub để chạy từ MCP.
 - Nếu kho GitHub đặt app trong thư mục con, cấu hình thư mục ứng dụng là `mobile` trong phần GitHub integration của EAS.
-- Chỉ tạo/chọn repo GitHub và cấp quyền khi người dùng cung cấp đích repo. Hiện chưa có remote GitHub.
+- Người dùng đã chọn repo `longlo2k3/nhipdem`; chưa xác nhận liên kết GitHub integration của EAS.
 - Nếu chưa liên kết GitHub, dùng EAS CLI để gửi mã từ thư mục `mobile` lên EAS khi người dùng sẵn sàng.
 - Trước thao tác tính phí, kiểm tra gói/quota và giới hạn chi phí được người dùng duyệt.
 

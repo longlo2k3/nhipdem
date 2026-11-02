@@ -1,0 +1,109 @@
+name: Build iPhone IPA (unsigned)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-unsigned-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 60
+    env:
+      CI: '1'
+      EXPO_NO_TELEMETRY: '1'
+    defaults:
+      run:
+        working-directory: mobile
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+
+      - name: Install and check app
+        run: |
+          npm ci
+          npx expo install --check
+          npm run typecheck
+          cd ..
+          npm test
+          npm run mobile:check
+
+      - name: Generate iOS project
+        run: npx expo prebuild --platform ios --no-install
+
+      - name: Install CocoaPods dependencies
+        run: pod install --project-directory=ios
+
+      - name: Build unsigned release for physical iPhone
+        run: |
+          set -euo pipefail
+          xcodebuild -version
+          workspace=$(find ios -maxdepth 1 -name '*.xcworkspace' -print -quit)
+          project=$(find ios -maxdepth 1 -name '*.xcodeproj' -print -quit)
+          test -n "$workspace"
+          test -n "$project"
+          scheme=$(basename "$project" .xcodeproj)
+          xcodebuild \
+            -workspace "$workspace" \
+            -scheme "$scheme" \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$RUNNER_TEMP/NhipTap.xcarchive" \
+            -derivedDataPath "$RUNNER_TEMP/NhipTapDerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY='' \
+            archive 2>&1 | tee "$RUNNER_TEMP/ios-build.log"
+
+      - name: Package and verify IPA
+        run: |
+          set -euo pipefail
+          app=$(find "$RUNNER_TEMP/NhipTap.xcarchive/Products/Applications" -maxdepth 1 -name '*.app' -print -quit)
+          test -n "$app"
+          executable=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$app/Info.plist")
+          platform=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleSupportedPlatforms:0' "$app/Info.plist")
+          test "$platform" = 'iPhoneOS'
+          lipo -verify_arch arm64 "$app/$executable"
+          test -s "$app/main.jsbundle"
+          mkdir -p "$RUNNER_TEMP/ipa/Payload" "$GITHUB_WORKSPACE/artifacts"
+          ditto "$app" "$RUNNER_TEMP/ipa/Payload/$(basename "$app")"
+          cd "$RUNNER_TEMP/ipa"
+          zip -qry "$GITHUB_WORKSPACE/artifacts/NhipTap-unsigned.ipa" Payload
+          cd "$GITHUB_WORKSPACE/artifacts"
+          unzip -t NhipTap-unsigned.ipa
+          shasum -a 256 NhipTap-unsigned.ipa > NhipTap-unsigned.ipa.sha256
+          ls -lh NhipTap-unsigned.ipa
+          echo '### IPA chưa ký đã được tạo' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Tải artifact NhipTap-unsigned-ipa và giải nén để lấy tệp .ipa. Cần ký và cài bằng AltStore Classic; không mở trực tiếp bằng Safari.' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: NhipTap-unsigned-ipa
+          path: artifacts/*
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-build-log
+          path: ${{ runner.temp }}/ios-build.log
+          if-no-files-found: ignore
+          retention-days: 7
