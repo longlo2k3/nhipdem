@@ -6,7 +6,7 @@
 - Đã nâng từ SDK 57 lên SDK 58 để khớp với Expo Go trên iPhone của người dùng.
 - Expo MCP: URL chính thức đã khai báo trong `.codex/config.toml` ở gốc dự án.
 - Dự án EAS đã liên kết: [@longvy/nhip-tap](https://expo.dev/accounts/longvy/projects/nhip-tap), ID `8e188183-3845-454e-98ca-f992654745b9`.
-- Expo CLI đã đăng nhập tài khoản `longvy`; Expo MCP đã xác thực OAuth thành công. Chưa tạo hoặc tải lên bản cài iOS.
+- Expo CLI đã đăng nhập tài khoản `longvy`; Expo MCP đã xác thực OAuth thành công. Đã tạo IPA chưa ký bằng GitHub Actions; chưa ký hoặc đưa lên TestFlight.
 - Người dùng có tài khoản Expo và chưa có Apple Developer.
 - Kho nguồn: [longlo2k3/nhipdem](https://github.com/longlo2k3/nhipdem); `mobile/` là submodule trỏ đến [longlo2k3/mobile](https://github.com/longlo2k3/mobile).
 
@@ -85,6 +85,10 @@ npx eas-cli@latest submit --platform ios --latest
 Build production chưa có nghĩa app đã hiện trên TestFlight. Cần submit và chờ Apple xử lý, hoàn tất yêu cầu tuân thủ và cấu hình người thử.
 
 ## Tạo IPA chưa ký trên GitHub Actions
+
+Đã build thành công ngày 03/11/2026: [lần chạy 41499341703](https://github.com/longlo2k3/nhipdem/actions/runs/41499341703).
+Artifact **NhipTap-unsigned-ipa** chứa IPA đã kiểm tra arm64/iPhoneOS, JavaScript
+bundle không rỗng, ZIP hợp lệ và SHA-256. Chưa kiểm tra ký/cài trên iPhone thật.
 
 Workflow `.github/workflows/ios-unsigned.yml` chạy thủ công trên máy macOS tiêu chuẩn
 của GitHub. Không cần Apple ID, chứng chỉ ký, token Expo hoặc gói EAS trả phí.
