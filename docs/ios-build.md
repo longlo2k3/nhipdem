@@ -88,6 +88,11 @@ Build production chưa có nghĩa app đã hiện trên TestFlight. Cần submit
 
 Workflow `.github/workflows/ios-unsigned.yml` chạy thủ công trên máy macOS tiêu chuẩn
 của GitHub. Không cần Apple ID, chứng chỉ ký, token Expo hoặc gói EAS trả phí.
+Kho `mobile` là riêng tư. Workflow lấy đúng gitlink bằng một bước checkout riêng,
+dùng secret `MOBILE_READONLY_DEPLOY_KEY`. Khóa này chỉ có quyền đọc kho `mobile`;
+không dùng token cá nhân và không công khai mã app. Có thể thu hồi trong
+**mobile → Settings → Deploy keys**, đồng thời xóa secret tương ứng ở kho `nhipdem`.
+Máy build dùng `macos-26-intel` để tránh hàng đợi arm64 đang thiếu công suất.
 
 1. Mở [Build iPhone IPA (unsigned)](https://github.com/longlo2k3/nhipdem/actions/workflows/ios-unsigned.yml).
 2. Chọn **Run workflow**, nhánh `main`, rồi **Run workflow**.

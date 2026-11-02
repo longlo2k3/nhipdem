@@ -23,3 +23,8 @@ the user's free Apple ID through AltStore Classic.
 - Latest observed status: queued, no runner assigned, no steps executed. No IPA
   exists yet. Native compilation, artifact verification, and installation remain
   unverified; inspect this run before declaring the task complete.
+- Follow-up: the run failed during recursive checkout because `mobile` is private
+  and the default workflow token cannot read another private repository. Replaced
+  recursive checkout with a separate pinned checkout using an encrypted read-only
+  deploy key restricted to `mobile`. The source remains private. Selected the
+  standard Intel macOS pool after GitHub reported arm64 capacity constraints.

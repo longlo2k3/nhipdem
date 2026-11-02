@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-26-intel
     timeout-minutes: 60
     env:
       CI: '1'
@@ -24,7 +24,24 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          submodules: recursive
+          persist-credentials: false
+
+      - name: Read pinned app revision
+        id: app
+        working-directory: .
+        run: |
+          set -euo pipefail
+          revision=$(git ls-tree HEAD mobile | awk '$1 == "160000" {print $3}')
+          test -n "$revision"
+          echo "revision=$revision" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout private app repository
+        uses: actions/checkout@v4
+        with:
+          repository: longlo2k3/mobile
+          ref: ${{ steps.app.outputs.revision }}
+          path: mobile
+          ssh-key: ${{ secrets.MOBILE_READONLY_DEPLOY_KEY }}
           persist-credentials: false
 
       - uses: actions/setup-node@v4
