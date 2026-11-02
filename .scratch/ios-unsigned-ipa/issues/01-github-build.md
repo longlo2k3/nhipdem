@@ -28,3 +28,7 @@ the user's free Apple ID through AltStore Classic.
   recursive checkout with a separate pinned checkout using an encrypted read-only
   deploy key restricted to `mobile`. The source remains private. Selected the
   standard Intel macOS pool after GitHub reported arm64 capacity constraints.
+- Run 41496258663: private checkout, app checks, CocoaPods and Xcode archive all
+  succeeded. Packaging failed because `lipo -verify_arch` parsed the executable
+  path as another architecture argument. Moved the input file before
+  `-verify_arch arm64`; retry required to verify the final artifact.

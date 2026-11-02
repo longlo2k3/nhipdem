@@ -95,7 +95,7 @@ jobs:
           executable=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$app/Info.plist")
           platform=$(/usr/libexec/PlistBuddy -c 'Print :CFBundleSupportedPlatforms:0' "$app/Info.plist")
           test "$platform" = 'iPhoneOS'
-          lipo -verify_arch arm64 "$app/$executable"
+          lipo "$app/$executable" -verify_arch arm64
           test -s "$app/main.jsbundle"
           mkdir -p "$RUNNER_TEMP/ipa/Payload" "$GITHUB_WORKSPACE/artifacts"
           ditto "$app" "$RUNNER_TEMP/ipa/Payload/$(basename "$app")"
