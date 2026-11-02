@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#203e32">
+  <meta name="description" content="Nhật ký tập luyện cá nhân theo lịch Thứ 2, Thứ 4 và Thứ 6.">
+  <title>Nhịp Tập — Nhật ký luyện tập của tôi</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23203e32'/%3E%3Cpath d='M13 35h10l6-17 8 28 6-17h8' fill='none' stroke='%23d7f39a' stroke-width='5'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="workout-plan.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="index.html"><span class="brand-mark">↗</span><span>nhịp tập<span class="brand-dot">.</span></span></a>
+      <div class="sidebar-label">KHÔNG GIAN CỦA TÔI</div>
+      <nav aria-label="Điều hướng chính">
+        <button class="nav-button active" data-view="workout"><span>◫</span> Buổi tập</button>
+        <button class="nav-button" data-view="history"><span>◷</span> Lịch sử luyện tập</button>
+      </nav>
+      <div class="routine-note"><span class="mini-label">LỊCH CỦA BẠN</span><strong>3 buổi mỗi tuần.<br>Mỗi buổi một bước tiến.</strong><div class="week-dots"><span>T2</span><i>·</i><span>T4</span><i>·</i><span>T6</span></div></div>
+      <div class="sidebar-bottom"><span class="status-dot"></span> Riêng tư trên trình duyệt này</div>
+    </aside>
+    <main>
+      <header class="topbar"><span>NHẬT KÝ LUYỆN TẬP CÁ NHÂN</span><span class="avatar" aria-label="Không gian cá nhân">TÔI</span></header>
+      <div id="storage-warning" class="warning" role="alert" hidden></div>
+      <section class="intro"><div><p class="eyebrow">ĐỀU ĐẶN TỪNG NGÀY</p><h1 id="page-title">Dành thời gian cho<br>phiên bản khỏe hơn.</h1><p class="intro-text">Theo lịch của bạn. Theo nhịp của riêng bạn.</p></div><div class="intro-number"><strong>03</strong><span>BUỔI / TUẦN</span></div></section>
+      <section id="workout-view">
+        <div class="schedule-toolbar"><div class="tabs" role="tablist" aria-label="Lịch tập trong tuần" id="plan-tabs"></div><label class="date-field">Ngày tập <input id="session-date" type="date" required></label></div>
+        <div class="workout-grid">
+          <section class="workout-card" aria-labelledby="workout-title"><div class="card-heading"><div><p id="plan-tag" class="eyebrow"></p><h2 id="workout-title"></h2><p id="plan-focus" class="muted"></p></div><div class="completion"><strong id="completed-count">0/6</strong><span>bài hoàn thành</span></div></div><div class="progress-track"><div id="workout-progress"></div></div><div id="exercise-list"></div><div class="session-notes"><label for="session-note">Ghi chú buổi tập</label><textarea id="session-note" rows="2" maxlength="5000" placeholder="Hôm nay bạn cảm thấy thế nào?"></textarea><span id="save-status" role="status">Tự động lưu trên trình duyệt này</span></div></section>
+          <aside class="workout-aside"><section class="timer-card"><span class="mini-label">NGHỈ GIỮA HIỆP</span><div class="timer-face" id="timer-display" role="timer" aria-label="Thời gian nghỉ còn lại">01:30</div><div class="timer-options" aria-label="Chọn thời gian nghỉ"><button data-seconds="60">60s</button><button data-seconds="90" class="selected">90s</button><button data-seconds="120">120s</button></div><button id="timer-toggle" class="primary-button">Bắt đầu nghỉ <span>→</span></button><button id="timer-reset" class="text-button">Đặt lại</button><span id="timer-status" class="sr-only" role="status"></span></section><section class="session-summary"><span class="mini-label">BUỔI TẬP NÀY</span><div><strong id="set-count">0 / 16</strong><span>hiệp hoàn thành</span></div><p>Ghi số lần thực tế, rồi đánh dấu hiệp bạn đã tập.</p><p class="small">Với bài một chân, ghi số lần mỗi chân; đánh dấu sau khi tập đủ hai bên.</p></section><div class="quiet-quote"><span>“</span>Tiến bộ được tạo nên<br>từ những lần bạn có mặt.</div></aside>
+        </div>
+      </section>
+      <section id="history-view" hidden><div class="history-heading"><div><h2>Lịch sử luyện tập</h2><p class="muted">Những buổi tập bạn đã ghi lại.</p></div><div class="backup-actions"><button id="export-data" class="outline-button">Xuất bản sao lưu ↓</button><label class="outline-button import-button">Nhập bản sao lưu<input id="import-data" type="file" accept="application/json,.json"></label></div></div><p class="backup-note">Bản sao lưu gồm toàn bộ kết quả và ghi chú. Nhập dữ liệu sẽ gộp các buổi tập; buổi trùng ngày và lịch sẽ dùng kết quả trong tệp.</p><div id="history-stats" class="history-stats"></div><div id="history-list"></div></section>
+      <footer><span>NHỊP TẬP <span class="footer-dot">/</span> Một thói quen dành cho chính mình.</span><span id="footer-status">Lưu tự động · Không cần tài khoản</span></footer>
+    </main>
+  </div>
+  <div id="toast" role="status" hidden></div>
+  <noscript>Vui lòng bật JavaScript để ghi và lưu kết quả tập luyện.</noscript>
+</body>
+</html>

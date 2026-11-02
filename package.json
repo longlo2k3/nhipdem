@@ -1,0 +1,15 @@
+{
+  "name": "nhip-tap",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Nhật ký tập luyện cá nhân theo lịch Thứ 2–4–6",
+  "scripts": {
+    "start": "node server.cjs",
+    "mobile": "npm --prefix mobile start",
+    "mobile:mcp": "npm --prefix mobile run start:mcp",
+    "mobile:sync": "node scripts/sync-mobile.cjs",
+    "mobile:check": "node scripts/sync-mobile.cjs --check && npm --prefix mobile run typecheck",
+    "test": "node --test tests/*.test.cjs",
+    "check": "node --check app.js && node --check workout-plan.js && node --check server.cjs"
+  }
+}

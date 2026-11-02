@@ -1,0 +1,14 @@
+node_modules/
+.expo/
+dist/
+*.ipa
+*.aab
+*.apk
+*.p12
+*.p8
+*.mobileprovision
+.env
+.env.*
+!.env.example
+credentials.json
+npm-debug.log*
